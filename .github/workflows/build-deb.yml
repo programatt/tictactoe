@@ -1,0 +1,45 @@
+name: Build Debian Package
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-deb:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+    
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y python3-pygame dpkg-dev
+    
+    - name: Read version from VERSION.md
+      id: get_version
+      run: |
+        VERSION=$(cat VERSION.md)
+        echo "VERSION=$VERSION" >> $GITHUB_ENV
+        echo "Package version: $VERSION"
+    
+    - name: Build Debian package
+      run: |
+        chmod +x build-deb.sh
+        ./build-deb.sh
+    
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: tictactoe-${{ env.VERSION }}-amd64-deb
+        path: tictactoe_${{ env.VERSION }}_amd64.deb
+        retention-days: 30
