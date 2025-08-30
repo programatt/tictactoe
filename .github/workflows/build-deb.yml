@@ -38,7 +38,7 @@ jobs:
         ./build-deb.sh
     
     - name: Upload artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: tictactoe-${{ env.VERSION }}-amd64-deb
         path: tictactoe_${{ env.VERSION }}_amd64.deb
